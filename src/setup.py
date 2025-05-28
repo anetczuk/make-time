@@ -28,7 +28,7 @@ packages_list = find_packages(include=["maketime", "maketime.*"])
 packages_data: Dict[str, Any] = {"maketime": []}
 
 ## additional scripts to install
-additional_scripts: List[str] = []
+additional_scripts: List[str] = ["maketime.sh"]
 
 requirements_path = os.path.join(SCRIPT_DIR, "requirements.txt")
 install_reqs = read_list(requirements_path)
@@ -38,7 +38,7 @@ install_reqs = read_list(requirements_path)
 setup(
     name="maketime",
     version="1.0.1",
-    description="Generate build timeline chart of `make` tool execution.",
+    description="calculate C++ object files compilation time based on `make` output",
     url="https://github.com/anetczuk/make-time",
     author="Arkadiusz Netczuk",
     license="BSD 3-Clause",

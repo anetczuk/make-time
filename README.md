@@ -1,6 +1,16 @@
 # make-time
 
-Generate build timeline chart of `make` tool execution.
+Calculate C++ object files compilation time based on `make` output.
+
+
+## Example output
+
+Example output with list of compiled objects and it's duration:
+```
+Total time                                         0.426148 sec
+CMakeFiles/hello_library.dir/src/Hello.cpp.o       0.254017 sec
+CMakeFiles/hello_binary.dir/src/main.cpp.o         0.023657 sec
+```
 
 
 ## Running
@@ -9,6 +19,9 @@ Use of application requires two steps:
 
 1. obtaining log data from *make* application,
 2. executing the tool.
+
+It can be even easier: just execute `maketime.sh` as replacement of `make` command. All command-line arguments 
+will be forwarded to `make` itself.
 
 
 #### Obtaining data from *make*
@@ -24,21 +37,25 @@ Use of application requires two steps:
 
 To run application simply execute followoing command:
 ```
-python3 -m maketime.main --help
+python3 -m maketime.main -clf compile_log.txt
 ```
 
 Application accepts following arguments:
 
 <!-- insertstart include="doc/cmdargs.txt" pre="\n" post="\n" -->
 ```
-usage: python3 -m maketime.main [-h] [--loglevel LOGLEVEL] [-la]
+usage: python3 -m maketime.main [-h] [--loglevel LOGLEVEL] [-la] -clf
+                                COMPILELOGFILE [--outfile OUTFILE]
 
-generate build timeline chart of `make` tool execution
+calculate C++ object files compilation time based on `make` output
 
 options:
-  -h, --help           show this help message and exit
-  --loglevel LOGLEVEL  Set log level (default: None)
-  -la, --logall        Log all messages (default: False)
+  -h, --help            show this help message and exit
+  --loglevel LOGLEVEL   Set log level (default: None)
+  -la, --logall         Log all messages (default: False)
+  -clf COMPILELOGFILE, --compilelogfile COMPILELOGFILE
+                        Path to make compile log file (default: None)
+  --outfile OUTFILE     Path to output file (default: )
 ```
 
 <!-- insertend -->

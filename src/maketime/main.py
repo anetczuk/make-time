@@ -21,7 +21,11 @@ import sys
 import argparse
 import logging
 
+import json
+
 from maketime import logger
+from maketime.io import write_file
+from maketime.parser import read_compile_log
 
 
 if __name__ == "__main__":
@@ -33,37 +37,64 @@ else:
 # =======================================================================
 
 
+def process(compilelogfile: str, outfile: str):
+    compile_list = read_compile_log(compilelogfile)
+    compile_list.sort(key=lambda item: item[1], reverse=True)
+
+    content = json.dumps(compile_list, indent=4)
+    if outfile:
+        write_file(outfile, content)
+
+    total_label = "Total time"
+    max_length = len(total_label)
+    for item in compile_list:
+        max_length = max(max_length, len(item[0]))
+    max_length += 2
+
+    for item, time in compile_list:
+        label = item
+        if item == "make_time":
+            label = total_label
+        print(f"{label: <{max_length}} {time:12.6f} sec")
+
+
+# =======================================================================
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="python3 -m maketime.main",
-        description="generate build timeline chart of `make` tool execution",
+        description="calculate C++ object files compilation time based on `make` output",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--loglevel", action="store", default=None, help="Set log level")
     parser.add_argument("-la", "--logall", action="store_true", help="Log all messages")
+    # pylint: disable=C0301
+    parser.add_argument("-clf", "--compilelogfile", action="store", required=True, help="Path to make compile log file")
+    parser.add_argument("--outfile", action="store", required=False, default="", help="Path to output file")
 
     ## =================================================
 
     args = parser.parse_args()
 
     if args.logall is True:
-        logger.configure(logLevel=logging.DEBUG)
+        logger.configure(logLevel=logging.DEBUG, use_file=False)
     elif args.loglevel is not None:
         loglevel_map = logging.getLevelNamesMapping()
         loglevel = loglevel_map.get(args.loglevel)
         if loglevel is not None:
-            logger.configure(logLevel=loglevel)
+            logger.configure(logLevel=loglevel, use_file=False)
         else:
-            logger.configure(logLevel=logging.INFO)
-            _LOGGER.info("loglevel not found - invalid loglevel name: %s", args.loglevel)
+            logger.configure(logLevel=logging.INFO, use_file=False)
+            _LOGGER.warning("loglevel not found - invalid loglevel name: %s", args.loglevel)
     else:
         # default log level
-        logger.configure(logLevel=logging.INFO)
+        logger.configure(logLevel=logging.INFO, use_file=False)
 
+    process(args.compilelogfile, args.outfile)
     return 0
 
 
 if __name__ == "__main__":
     code = main()
-    _LOGGER.info("exiting")
     sys.exit(code)

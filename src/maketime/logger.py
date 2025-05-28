@@ -31,7 +31,7 @@ def get_logging_output_file(log_dir=None):
     return logFile
 
 
-def configure(logFile=None, logDir=None, logLevel=None):
+def configure(logFile=None, logDir=None, logLevel=None, use_file: bool = True):
     # pylint: disable=W0603
     global log_file
     log_file = logFile
@@ -41,18 +41,19 @@ def configure(logFile=None, logDir=None, logLevel=None):
     if logLevel is None:
         logLevel = logging.DEBUG
 
-    ## rotation of log files, 1048576 equals to 1MB
-    fileHandler = handlers.RotatingFileHandler(filename=log_file, mode="a+", maxBytes=1048576, backupCount=999)
-    ## fileHandler    = logging.FileHandler( filename=log_file, mode="a+" )
-    consoleHandler = logging.StreamHandler(stream=sys.stdout)
-
     formatter = create_formatter()
 
-    fileHandler.setFormatter(formatter)
+    consoleHandler = logging.StreamHandler(stream=sys.stdout)
     consoleHandler.setFormatter(formatter)
-
     logging.root.addHandler(consoleHandler)
-    logging.root.addHandler(fileHandler)
+
+    if use_file:
+        ## rotation of log files, 1048576 equals to 1MB
+        fileHandler = handlers.RotatingFileHandler(filename=log_file, mode="a+", maxBytes=1048576, backupCount=999)
+        ## fileHandler    = logging.FileHandler( filename=log_file, mode="a+" )
+        fileHandler.setFormatter(formatter)
+        logging.root.addHandler(fileHandler)
+
     logging.root.setLevel(logLevel)
 
     logging.getLogger("matplotlib").setLevel(logging.WARNING)
