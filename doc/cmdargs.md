@@ -1,0 +1,11 @@
+## <a name="main_help"></a> python3 -m maketime.main --help
+```
+usage: python3 -m maketime.main [-h] [--loglevel LOGLEVEL] [-la]
+
+generate build timeline chart of `make` tool execution
+
+options:
+  -h, --help           show this help message and exit
+  --loglevel LOGLEVEL  Set log level (default: None)
+  -la, --logall        Log all messages (default: False)
+```
