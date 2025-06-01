@@ -25,7 +25,7 @@ import json
 
 from maketime import logger
 from maketime.io import write_file
-from maketime.parser import read_compile_log
+from maketime.parser import read_compile_log, print_log
 
 
 if __name__ == "__main__":
@@ -38,24 +38,13 @@ else:
 
 
 def process(compilelogfile: str, outfile: str):
-    compile_list = read_compile_log(compilelogfile)
-    compile_list.sort(key=lambda item: item[1], reverse=True)
+    compile_list = read_compile_log(compilelogfile, True)
 
     content = json.dumps(compile_list, indent=4)
     if outfile:
         write_file(outfile, content)
 
-    total_label = "Total time"
-    max_length = len(total_label)
-    for item in compile_list:
-        max_length = max(max_length, len(item[0]))
-    max_length += 2
-
-    for item, time in compile_list:
-        label = item
-        if item == "make_time":
-            label = total_label
-        print(f"{label: <{max_length}} {time:12.6f} sec")
+    print_log(compile_list)
 
 
 # =======================================================================

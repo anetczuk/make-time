@@ -37,7 +37,7 @@ install_reqs = read_list(requirements_path)
 
 setup(
     name="maketime",
-    version="1.0.1",
+    version="1.1.1",
     description="calculate C++ object files compilation time based on `make` output",
     url="https://github.com/anetczuk/make-time",
     author="Arkadiusz Netczuk",
